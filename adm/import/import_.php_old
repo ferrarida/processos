@@ -1,0 +1,54 @@
+
+
+
+<body>
+<div id="container">
+<div id="form">
+ 
+<?php
+include_once("db_connect.php");
+
+
+ 
+//Transferir o arquivo
+if (isset($_POST['submit'])) {
+ 
+    if (is_uploaded_file($_FILES['import_data']['tmp_name'])) {
+        echo "<h1>" . "File ". $_FILES['import_data']['name'] ." transferido com sucesso ." . "</h1>";
+        echo "<h2>Exibindo o conteúdo:</h2>";
+        readfile($_FILES['import_data']['tmp_name']);
+    }
+ 
+    //Importar o arquivo transferido para o banco de dados
+    $handle = fopen($_FILES['import_data']['tmp_name'], "r");
+ 
+    while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+        $import="INSERT into ofertavarejo(cpfcnpj,Cliente,op19)values('$data[0]','$data[1]','$data[2]')";
+ 
+        mysql_query($import) or die(mysql_error());
+    }
+ 
+    fclose($handle);
+ 
+    print "Importação feita.";
+ 
+//Visualizar formulário de transferência
+} else {
+ 
+    print "Transferir novos arquivos CSV selecionando o arquivo e clicando no botão Upload<br />\n";
+ 
+    print "<form enctype='multipart/form-data' action='#' method='post'>";
+ 
+    print "Nome do arquivo para importar:<br />\n";
+ 
+    print "<input size='50' type='file' name='filename'><br />\n";
+ 
+    print "<input type='submit' name='submit' value='Upload'></form>";
+ 
+}
+ 
+?>
+ 
+</div>
+</div>
+</body>
